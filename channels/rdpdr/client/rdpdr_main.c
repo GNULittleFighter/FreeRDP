@@ -135,7 +135,7 @@ static BOOL rdpdr_load_drive(rdpdrPlugin* rdpdr, const char* name, const char* p
 		RDPDR_DRIVE* drive;
 		RDPDR_DEVICE* device;
 	} drive;
-	const char* args[] = { name, path, automount ? NULL : name };
+	const char* args[] = { name, path, automount ? name : NULL };
 
 	drive.device = freerdp_device_new(RDPDR_DTYP_FILESYSTEM, ARRAYSIZE(args), args);
 	if (!drive.device)
