@@ -141,7 +141,7 @@ static void printer_win_close_printjob(rdpPrintJob* printjob)
 	if (!ClosePrinter(win_printer->hPrinter))
 	{
 	}
-
+	win_printer->hPrinter = NULL;
 	win_printer->printjob = NULL;
 
 	free(win_printjob->di.pDocName);
@@ -159,6 +159,17 @@ static rdpPrintJob* printer_win_create_printjob(rdpPrinter* printer, UINT32 id)
 	win_printjob = (rdpWinPrintJob*)calloc(1, sizeof(rdpWinPrintJob));
 	if (!win_printjob)
 		return NULL;
+
+	if (win_printer->hPrinter == NULL)
+	{
+		WCHAR* nameW = NULL;
+		ConvertToUnicode(CP_UTF8, 0, win_printer->printer.name, -1, &nameW, 0);
+		if (!nameW)
+			return NULL;
+
+		if (!OpenPrinter(nameW, &(win_printer->hPrinter), NULL))
+			return NULL;
+	}
 
 	win_printjob->printjob.id = id;
 	win_printjob->printjob.printer = printer;
